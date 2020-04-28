@@ -4,7 +4,7 @@
 	<groupId>Spring3HibernateApp</groupId>
 	<artifactId>Spring3HibernateApp</artifactId>
 	<packaging>war</packaging>
-	<version>2020.04.1-SNAPSHOT</version>
+	<version>2020.99.0-SNAPSHOT</version>
 	 <!-- <version>2020.04.1-SNAPSHOT</version> -->
 
 	<scm>
