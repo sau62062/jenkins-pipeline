@@ -116,6 +116,16 @@ under the License.
      |
   
     -->
+      <server>
+      <id>nexus-snapshots</id>
+      <username>admin</username>
+      <password>admin</password>
+    </server>
+    <server>
+      <id>nexus-releases</id>
+      <username>admin</username>
+      <password>admin</password>
+    </server>
   </servers>
 
   <!-- mirrors
