@@ -67,7 +67,21 @@ BRANCH_NAME=sh(script:"echo $GIT_BRANCH|sed -e 's|origin/||g'",returnStdout:true
 }
 	
         
-stage ('build') {
+stage ('validate') {
+
+steps {	  
+sh 'echo "compile the project"'
+sh ''' mvn validate '''
+}		
+}
+	stage ('compile') {
+
+steps {	  
+sh 'echo "compile the project"'
+sh ''' mvn compile '''
+}		
+}
+	stage ('install') {
 
 steps {	  
 sh 'echo "compile the project"'
