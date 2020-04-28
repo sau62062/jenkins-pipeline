@@ -114,8 +114,7 @@ under the License.
      | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are
      |       used together.
      |
-  
-    -->
+
       <server>
       <id>nexus-snapshots</id>
       <username>admin</username>
