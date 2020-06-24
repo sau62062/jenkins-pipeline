@@ -93,7 +93,13 @@ sh ''' mvn install '''
 steps {	  
 sh 'echo "compile the project"'
 sh ''' mvn deploy '''
-}		
+}	
+		stage ('Geneate Sonar Report') {
+
+steps {	  
+sh 'echo "Geneate Sonar Report"'
+sh ''' mvn sonar:sonar '''
+}	
 }
 }
 }
