@@ -83,7 +83,7 @@ sh ''' mvn compile '''
 }
 	stage ('install') {
 
-steps {	  
+/*steps {	  
 sh 'echo "compile the project"'
 sh ''' mvn install '''
 }		
@@ -93,7 +93,8 @@ sh ''' mvn install '''
 steps {	  
 sh 'echo "compile the project"'
 sh ''' mvn deploy '''
-}	
+}	}
+*/
 		stage ('Geneate Sonar Report') {
 
 steps {	  
