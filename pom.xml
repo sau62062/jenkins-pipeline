@@ -146,6 +146,12 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
+<groupId>org.sonarsource.scanner.maven</groupId>
+<artifactId>sonar-maven-plugin</artifactId>
+<version>3.2</version>
+</dependency>
+
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
@@ -157,6 +163,7 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
+			
 			<groupId>antlr</groupId>
 			<artifactId>antlr</artifactId>
 			<version>2.7.6</version>
@@ -448,4 +455,19 @@
 		</dependency>
 
 	</dependencies>
+	
+	<profiles>
+<profile>
+<id>sonar</id>
+<activation>
+<activeByDefault>true</activeByDefault>
+</activation>
+<properties>
+<!-- Optional URL to server. Default value is http://localhost:9000 -->
+<sonar.host.url>
+http://54.167.12.234:9000
+</sonar.host.url>
+</properties>
+</profile>
+</profiles>
 </project>
