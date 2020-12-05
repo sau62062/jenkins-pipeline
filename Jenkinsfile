@@ -39,8 +39,7 @@ BRANCH_NAME=sh(script:"echo $GIT_BRANCH|sed -e 's|origin/||g'",returnStdout:true
     BUILD_VERSION=sh(script:"echo $GIT_BRANCH |sed -e 's|origin/release.||g'",returnStdout:true).trim()
     echo "BUILD_VERSION=${BUILD_VERSION}"
   }
-  /*component id need for depoy job */
-  UDEPLOY_COMPONENT_ID='component id'
+
   GIT_COMMIT= sh([script: "git rev-parse HEAD",returnStdout:true]).trim()
   NEXUS_VERSION= sh([script: "git rev-list ${GIT_COMMIT} --count",returnStdout:true]).trim()
   GIT_SIMPLE= sh([script: "git rev-list ${GIT_COMMIT} |head -n 1 |cut -c 1-5",returnStdout:true]).trim()
