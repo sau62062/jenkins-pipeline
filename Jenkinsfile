@@ -1,100 +1,44 @@
 pipeline {
-agent any
-triggers {
-	//Execute  every five minute
-cron('H/5 * * * *')
+    agent any
+tools{
+    maven "Maven-3.6.3"
 }
-
-options{
-// only keeps the last 10 builds of this pipelone
-buildDiscarder(logRotator(numToKeepStr: '10'))
-  disableConcurrentBuilds()
-//disableConcurrentBuilds
-
-// adds timestamps to build logs
-timestamps()
-}
-tools
-{
-maven 'Maven-3.5.4'
-}
-stages {
-	stage('setup')
-{
-steps
-  {
-/* set all variariables for job *? */
-/*in order to put all the variables craeted in this script block use the following syntax: sh([script: "echo \"Value:$GIT_COMMIT}\]) */
-script
-{
-BRANCH_NAME=sh(script:"echo $GIT_BRANCH|sed -e 's|origin/||g'",returnStdout:true).trim()
-  if("$BRANCH_NAME}"=='master')
-  {
-    echo"BRANCH_NAME:${BRANCH_NAME}"
-    BUILD_VERSION='2019.99.0'
-    echo "BUILD_VERSION=${BUILD_VERSION}"
-  }
-  else
-  {
-    BUILD_VERSION=sh(script:"echo $GIT_BRANCH |sed -e 's|origin/release.||g'",returnStdout:true).trim()
-    echo "BUILD_VERSION=${BUILD_VERSION}"
-  }
-
-  GIT_COMMIT= sh([script: "git rev-parse HEAD",returnStdout:true]).trim()
-  NEXUS_VERSION= sh([script: "git rev-list ${GIT_COMMIT} --count",returnStdout:true]).trim()
-  GIT_SIMPLE= sh([script: "git rev-list ${GIT_COMMIT} |head -n 1 |cut -c 1-5",returnStdout:true]).trim()
-  //get latest successful build name
-  build =currentBuild
-  while (build != null && build.result != 'SUCCESS')
-	{
-  build=build.previousBuild
-}
-    if(build == null)
-    {
-      //this means there has not been a success fill build yet
-      PREVIOUS_BUILD_VERSION='none'
+    stages {
+        stage('Clone the Project') {
+            steps {
+                git branch: 'murali', changelog: false, credentialsId: 'git_username_password', poll: false, url: 'https://github.com/MooleMuraliDharaReddy/java-app.git'
+            }
+        }
+        stage('Build the project'){
+            steps{
+                
+                sh 'mvn clean install'
+                
+            }
+        }
+        stage('Upload the artifacts'){
+            steps{
+                nexusArtifactUploader artifacts: [[artifactId: 'Spring3HibernateApp', classifier: '', file: '/var/lib/jenkins/workspace/jenkins-pipeline-project/target/Spring3HibernateApp.war', type: 'war']], credentialsId: 'Nexus_username_password', groupId: 'Spring3HibernateApp', nexusUrl: '3.236.45.152:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'maven-snapshots', version: '1.0-SNAPSHOT'
+            }
+        }
+        stage ('DEV Deploy') {
+      steps {
+      echo "deploying to DEV Env "
+     deploy adapters: [tomcat7(credentialsId: 'tomcat_username_password', path: '', url: 'http://3.236.45.152:8080/')], contextPath: null, war: '**/*.war'    
+          
+          
+      }
     }
-    else
-    {
-      PREVIOUS_BUILD_VERSION=build.displayName
+    
+     stage ('DEV Approve') {
+      steps {
+      echo "Taking approval from DEV Manager for QA Deployment"
+        timeout(time: 7, unit: 'DAYS') {
+        input message: 'Do you want to deploy?', submitter: 'admin'
+		
+		
+        }
+      }
     }
-    echo "LAST SUCCESS BUILD NAME: ${PREVIOUS_BUILD_VERSION}"
-    //srt jenkisn build name to be same as artifact version that will be published
-    currentBuild.displayName="${BUILD_VERSION}.${NEXUS_VERSION}-${GIT_SIMPLE}"
-  }
-}
-}
-	
-        
-stage ('validate') {
-
-steps {	  
-sh 'echo "validate  the project"'
-sh ''' mvn validate '''
-}		
-}
-	stage ('compile') {
-
-steps {	  
-sh 'echo "compile the project"'
-sh ''' mvn compile '''
-}		
-}
-	stage ('install') {
-
-steps {	  
-sh 'echo "install the project"'
-sh ''' mvn install '''
-}		
-}
-	/*
-	stage ('publish') {
-
-steps {	  
-sh 'echo "compile the project"'
-sh ''' mvn deploy '''
-}		
-}
-*/	
-}
+    }
 }
